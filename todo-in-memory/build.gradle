@@ -1,0 +1,83 @@
+// Gradle에 사용할 플러그인(기능) 등록
+	// 프로젝트 빌드 과정에서 그래들이 사용할 플러그인 설정
+plugins {
+	// 컴파일, 테스트, 패키징, 실행 등 java 프로젝트 빌드에 필요한 태스크 제공
+	id 'java'
+	// 스프링 부트의 의존성 관리 및 패키징, 자동설정, 실행 관련 테스크 제공
+	id 'org.springframework.boot' version '4.1.1'
+	// 스프링 의존성 관리 기능 제공
+	id 'io.spring.dependency-management' version '1.1.7'
+	// 다양한 언어를 위한 코드 포매터와 관련 테스크 제공
+	id 'com.diffplug.spotless' version '6.25.0'
+}
+
+
+// 프로젝트 식별 정보
+group = 'com.hwang'
+version = '0.0.1-dev' // 현재 내가 만드는 프로젝트의 버전
+
+
+// Java 컴파일러와 관련된 설정
+java {
+	// Java 21 컴파일러 사용 지정
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+
+// 라이브러리(의존성)를 가져올 곳 (Gradle이 필요한 라이브러리를 어디서 다운할지 지정)
+repositories {
+	mavenCentral()
+}
+
+
+// 프로젝트에서 사용할 라이브러리 목록 (사용할 라이브러리 의존성 선언)
+	// 프로젝트 구현, 테스트, 런타임 의존성을 설정
+	// 여기에 필요 의존성 추가하면 그래들이 자동으로 mavenCentral통해 다운
+dependencies {
+	// Spring Boot Web 스타터 의존성 추가 // 웹 애플리케이션 개발에 필요한 기존적 의존성 제공
+	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	// Swagger UI를 사용하기 위한 의존성 추가
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0'
+	// Lombok 라이브러리를 컴파일 시에만 사용하도록 설정 // Getter, Setter 자동 생성 기능 제공
+	compileOnly 'org.projectlombok:lombok'
+	// Lombok이 제공하는 기능 사용 위해 애노테이션 프로세서 추가
+	annotationProcessor 'org.projectlombok:lombok'
+	// Junit5를 이용한 테스트를 위한 의존성 추가
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	// Junit5 테스트를 실행하기 위한 런타임 의존성 추가
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+
+// 테스트 작업 구성 설정
+tasks.named('test') {
+	// JUnit Platform으로 테스트 실행
+	useJUnitPlatform()
+
+	// 테스트 결과 로그 설정
+	testLogging {
+		// 출력할 테스트 이벤트 결과 종류 지정
+		events "passed", "skipped", "failed"
+		// 테스트 결과가 최신이어도 다시 실행하도록 설정 (테스트를 매번 실행)
+		outputs.upToDateWhen {false}
+		// Java agent 경고 메세지 억제 (테스트 JVM에서 동적 Agent 로딩 허용)
+		jvmArgs '-XX:+EnableDynamicAgentLoading'
+	}
+}
+
+
+// spotless 플러그인을 사용하여 코드 양식을 자동으로 맞추는 설정
+spotless{
+	// java 파일에 대한 포맷팅 설정을 추가
+	java{
+		// Google java Format 1.22.0 버전 적용 (Google 제공 자바 코드 포맷터)
+			// reflowLongStrings() : 문자열 긴 경우 + 연산자로 정리 허용 옵션
+		googleJavaFormat('1.22.0').aosp().reflowLongStrings()
+	}
+}
+
+// 빌드 테스크 설정
+//빌드 실행 전 spotlessApply를 실행해, 코드 통일 양식으로 자동 포맷팅
+build.dependsOn 'spotlessApply'
