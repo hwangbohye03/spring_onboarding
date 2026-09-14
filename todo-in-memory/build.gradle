@@ -4,7 +4,7 @@ plugins {
 	// 컴파일, 테스트, 패키징, 실행 등 java 프로젝트 빌드에 필요한 태스크 제공
 	id 'java'
 	// 스프링 부트의 의존성 관리 및 패키징, 자동설정, 실행 관련 테스크 제공
-	id 'org.springframework.boot' version '4.1.1'
+	id 'org.springframework.boot' version '3.3.1'
 	// 스프링 의존성 관리 기능 제공
 	id 'io.spring.dependency-management' version '1.1.7'
 	// 다양한 언어를 위한 코드 포매터와 관련 테스크 제공
@@ -37,15 +37,15 @@ repositories {
 	// 여기에 필요 의존성 추가하면 그래들이 자동으로 mavenCentral통해 다운
 dependencies {
 	// Spring Boot Web 스타터 의존성 추가 // 웹 애플리케이션 개발에 필요한 기존적 의존성 제공
-	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
 	// Swagger UI를 사용하기 위한 의존성 추가
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 	// Lombok 라이브러리를 컴파일 시에만 사용하도록 설정 // Getter, Setter 자동 생성 기능 제공
 	compileOnly 'org.projectlombok:lombok'
 	// Lombok이 제공하는 기능 사용 위해 애노테이션 프로세서 추가
 	annotationProcessor 'org.projectlombok:lombok'
 	// Junit5를 이용한 테스트를 위한 의존성 추가
-	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// Junit5 테스트를 실행하기 위한 런타임 의존성 추가
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

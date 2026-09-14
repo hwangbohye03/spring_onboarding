@@ -55,6 +55,7 @@ public class TodoController {
     @Operation(summary = "작업 생성", description = "새로운 작업 생성")
     @ApiResponses({@ApiResponse(responseCode = "201", description = "생성됨")})
     public ResponseEntity<Todo> createTodo(@RequestBody Todo todo) {
+        // @RequestBody: 클라이언트가 보낸 JSON의 Key 항목과 자바 DTO/Entity의 필드명이 일치하면, 알아서 객체 생성
         return ResponseEntity.status(201).body(todoService.save(todo));
     }
 
