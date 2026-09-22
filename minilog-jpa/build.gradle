@@ -1,0 +1,91 @@
+plugins {
+	// 컴파일, 테스트, 패키징, 실행 등 java 프로젝트 빌드에 필요한 태스크 제공
+	id 'java'
+	// 스프링 부트의 의존성 관리 및 패키징, 자동설정, 실행 관련 테스크 제공
+	// 스프링 부트 3.3.1 버전 호환되는 그래들 버전 8.8로 수정 (gradle/wrapper/gradle-wrapper.properties)
+	id 'org.springframework.boot' version '3.3.1'
+	// 스프링 의존성 관리 기능 제공
+	id 'io.spring.dependency-management' version '1.1.5'
+	// 다양한 언어를 위한 코드 포매터와 관련 태스크 제공 (spotlessApply)
+	id 'com.diffplug.spotless' version '6.25.0'
+}
+
+// 프로젝트 식별 정보
+group = 'com.hwang'
+version = '0.0.1-dev'
+
+java {
+	// Java 21 컴파일러 사용 지정
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+// 라이브러리(의존성)를 가져올 곳 (Gradle이 필요한 라이브러리를 어디서 다운할지 지정)
+repositories {
+	mavenCentral()
+}
+
+// 프로젝트에서 사용할 라이브러리 목록 (사용할 라이브러리 의존성 선언)
+// 프로젝트 구현, 테스트, 런타임 의존성을 설정
+// 여기에 필요 의존성 추가하면 그래들이 자동으로 mavenCentral통해 다운
+dependencies {
+	// Spring Boot Web 스타터 의존성 추가 // 웹 애플리케이션 개발에 필요한 기존적 의존성 제공
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Swagger UI를 사용하기 위한 의존성 추가
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+
+	// .env 파일 로드를 위한 의존성 추가
+	implementation 'io.github.cdimascio:dotenv-java:3.0.0'
+
+	// Spring Data JPA 스타터 의존성 추가
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// MySql JDBC 드라이버 의존성 추가
+	implementation 'com.mysql:mysql-connector-j'
+
+	// Lombok 라이브러리를 컴파일 시에만 사용하도록 설정
+	compileOnly 'org.projectlombok:lombok'
+	// Lombok이 제공하는 기능 사용 위해, 앤테이션 프로세서 추가
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Junit5를 이용한 테스트를 위한 의존성 추가
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	//Import TestContainer for JUnit 5
+	testImplementation 'org.testcontainers:junit-jupiter:1.20.1'
+	testImplementation 'org.testcontainers:testcontainers:1.20.1'
+	testImplementation 'org.testcontainers:mysql:1.20.1'
+
+	// Junit5 테스트를 실행하기 위한 런타임 의존성 추가
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// 테스트 태스크 구성
+tasks.named('test') {
+	// JUnit Platform으로 테스트 실행
+	useJUnitPlatform()
+
+	// 테스트 실행 시 상세 결과 출력 활성화
+	testLogging(){
+		// 테스트 이벤트 중 어떤 것을 로그로 출력할 지 설정
+		events "passed", "skipped", "failed"
+		// 테스트 케이스 별 결과 항상 출력할 지 설정
+		outputs.upToDateWhen { false }
+		// Java Agent 경고 메세지 억제
+		jvmArgs '-XX:+EnableDynamicAgentLoading'
+	}
+}
+
+// Spotless 프러그인 사용 (적용 언어, 스타일, 포맷 규칙 등) 설정
+spotless{
+	// Java 파일에 대한 포맷팅 설정 추가
+	java{
+		// Google Java Format 적용 // 긴 문자열 줄바꿈(reflow) 처리 활성화
+		googleJavaFormat('1.22.0').reflowLongStrings()
+	}
+}
+
+// spotlessApply (자동 코드 양식 정리) 실행 시점 설정 : build 할 때
+build.dependsOn 'spotlessApply'
