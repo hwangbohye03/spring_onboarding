@@ -3,20 +3,24 @@ package com.hwang.minilog;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @SpringBootApplication
+@EnableJpaAuditing // 프로젝트 전체에 Auditing 기능을 활성화
 public class MinilogApplication {
 
-	public static void main(String[] args) {
+  public static void main(String[] args) {
 
-		// .env 파일 로드 및 System Property 설정
-		Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-		dotenv.entries().forEach(entry -> {
-			System.setProperty(entry.getKey(), entry.getValue());
-		});
+    // .env 파일 로드 및 System Property 설정
+    Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+    dotenv
+        .entries()
+        .forEach(
+            entry -> {
+              System.setProperty(entry.getKey(), entry.getValue());
+            });
 
-		// 스프링 부트 애플리케이션 실행
-		SpringApplication.run(MinilogApplication.class, args);
-	}
-
+    // 스프링 부트 애플리케이션 실행
+    SpringApplication.run(MinilogApplication.class, args);
+  }
 }
